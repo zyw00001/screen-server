@@ -1,8 +1,13 @@
-const {app, BrowserWindow, Menu} = require('electron');
+const {app, BrowserWindow, Menu, ipcMain} = require('electron');
 const path = require('path');
 
 const DEV = true;
 let win;
+
+// 单例运行
+if (!app.requestSingleInstanceLock()) {
+  app.quit();
+}
 
 const addItemsForDev = (submenu) => {
   if (DEV) {
