@@ -1,12 +1,32 @@
 
 class ScreenRender {
-  constructor({canvasId='app', hBlockCount=8, vBlockCount=4, width=1600, height=900}={}) {
-    this.canvas = document.getElementById(canvasId);
-    this.ctx = this.canvas.getContext('2d');
+  constructor({hBlockCount=8, vBlockCount=4, width=1600, height=900}={}) {
     this.hBlockCount = hBlockCount;
     this.vBlockCount = vBlockCount;
     this.blockWidth = Math.floor(width / hBlockCount);
     this.blockHeight = Math.floor(height / vBlockCount);
+    this.buf = null;
+  }
+
+  attach(id='app') {
+    this.parent = document.getElementById(id);
+    if (this.parent) {
+      this.parent.innerHTML = '<canvas width="1600" height="900">该浏览器不支持canvas</canvas>';
+    }
+  }
+
+  detach() {
+    if (this.parent) {
+      this.parent.innerHTML = '';
+      this.parent = null;
+    }
+  }
+
+  setBuf(buf) {
+    this.buf = buf;
+    if (buf) {
+      this.render();
+    }
   }
 
   toImageBuf(buf) {
@@ -20,13 +40,19 @@ class ScreenRender {
     return imageBuf;
   }
 
-  render(buf) {
-    const index = buf[buf.byteLength - 4];
+  draw(canvas) {
+    const index = this.buf[this.buf.byteLength - 4];
     const offsetX = (index % this.hBlockCount) * this.blockWidth;
     const offsetY = Math.floor(index / this.hBlockCount) * this.blockHeight;
-    const imageBuf = this.toImageBuf(buf);
+    const imageBuf = this.toImageBuf(this.buf);
     const imageData = new ImageData(imageBuf, this.blockWidth, this.blockHeight);
-    this.ctx.putImageData(imageData, offsetX, offsetY);
+    canvas.getContext('2d').putImageData(imageData, offsetX, offsetY);
+  }
+
+  render() {
+    if (this.parent && this.buf) {
+      this.draw(this.parent.firstChild);
+    }
   }
 }
 
