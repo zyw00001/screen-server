@@ -5,13 +5,25 @@ class ScreenRender {
     this.vBlockCount = vBlockCount;
     this.blockWidth = Math.floor(width / hBlockCount);
     this.blockHeight = Math.floor(height / vBlockCount);
+    this.width = width;
+    this.height = height;
     this.buf = null;
+    this.init = false;
+  }
+
+  setSize(width, height) {
+    if (width && height) {
+      this.blockWidth = Math.floor(width / this.hBlockCount);
+      this.blockHeight = Math.floor(height / this.vBlockCount);
+      this.width = width;
+      this.height = height;
+    }
   }
 
   attach(id='app') {
     this.parent = document.getElementById(id);
     if (this.parent) {
-      this.parent.innerHTML = '<canvas width="1600" height="900">该浏览器不支持canvas</canvas>';
+      this.init = false;
     }
   }
 
@@ -51,6 +63,10 @@ class ScreenRender {
 
   render() {
     if (this.parent && this.buf) {
+      if (!this.init) {
+        this.init = true;
+        this.parent.innerHTML = `<canvas width="${this.width}" height="${this.height}">该浏览器不支持canvas</canvas>`;
+      }
       this.draw(this.parent.firstChild);
     }
   }

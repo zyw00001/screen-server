@@ -6,14 +6,21 @@ class Users {
     this.onMonitor = null;
   }
 
-  addUser(ws, mac) {
-    const index = this.users.findIndex(user => user.ws === ws);
-    if (index > -1) {
-      this.users[index].mac = mac;
-    } else {
-      this.users.push({mac, ws});
+  addUser(ws) {
+    if (!this.users.find(user => user.ws === ws)) {
+      this.users.push({ws});
+      this.render();
     }
-    this.render();
+  }
+
+  setUser(ws, mac, width, height) {
+    const user = this.users.find(user => user.ws === ws);
+    if (user) {
+      user.mac = mac;
+      user.width = width;
+      user.height = height;
+      this.render();
+    }
   }
 
   removeUser(value, key='ws') {
@@ -45,7 +52,7 @@ class Users {
   render() {
     if (this.parent) {
       const renderUser = (user) => {
-        return `<li>${user.mac}</li>`;
+        return `<li>${user.mac || '新用户...'}</li>`;
       };
       this.parent.innerHTML = `<div class='users'><div><button>监控</button><span>用户:${this.users.length}</span></div><ul>${this.users.map(renderUser)}</ul></div>`;
       this.parent.firstChild.firstChild.addEventListener('click', () => {

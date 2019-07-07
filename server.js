@@ -70,6 +70,7 @@ const initWebSocket = (screenRender, users) => {
     if (user) {
       users.detach();
       screenRender.attach();
+      screenRender.setSize(user.width, user.height);
       user.ws.send('screen-shot-play');
 
       setContextMenu({
@@ -89,14 +90,14 @@ const initWebSocket = (screenRender, users) => {
   }));
 
   wss.on('connection', (ws, req) => {
-    users.addUser(ws, '新用户...');
+    users.addUser(ws);
     ws.send('hardware-info');
 
     ws.on('message', (data) => {
       if (typeof data === 'string') {
         const json = JSON.parse(data);
         if (json.type === 'hardware-info') {
-          users.addUser(ws, json.mac || 'mac错误');
+          users.setUser(ws, json.mac || 'mac错误', json.width, json.height);
         }
       } else {
         screenRender.setBuf(data);
