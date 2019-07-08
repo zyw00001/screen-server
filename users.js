@@ -33,6 +33,14 @@ class Users {
     }
   }
 
+  getUser(ws) {
+    return ws ? this.users.find(user => user.ws === ws) : null;
+  }
+
+  getAll() {
+    return this.users;
+  }
+
   setMonitor(callback) {
     this.onMonitor = callback;
   }

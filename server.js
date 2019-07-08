@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const WebSocketServer = require('ws').Server;
 const {remote} = require('electron');
 const {Menu, MenuItem} = remote;
-const ScreenRender = require('./screen-render');
+const ScreenRenderMulti = require('./screen-render-multi');
 const Users = require('./users');
 
 const app = express();
@@ -62,21 +62,21 @@ const setContextMenu = ({onReturn, onPause, onPlay}={}) => {
   window.addEventListener('contextmenu', showContextMenu, false);
 };
 
-const initWebSocket = (screenRender, users) => {
+const initWebSocket = (screens, users) => {
   const wss = new WebSocketServer({server});
 
   users.attach();
   users.setMonitor(((user) => {
     if (user) {
       users.detach();
-      screenRender.attach();
-      screenRender.setSize(user.width, user.height);
+      screens.attach();
+      screens.setScreens(users.getAll());
       user.ws.send('screen-shot-play');
 
       setContextMenu({
         onReturn: () => {
           user.ws.send('screen-shot-stop');
-          screenRender.detach();
+          screens.detach();
           users.attach();
         },
         onPause: () => {
@@ -100,7 +100,7 @@ const initWebSocket = (screenRender, users) => {
           users.setUser(ws, json.mac || 'mac错误', json.width, json.height);
         }
       } else {
-        screenRender.setBuf(data);
+        screens.setScreenImage(users.getUser(ws), data);
       }
     });
 
@@ -110,4 +110,4 @@ const initWebSocket = (screenRender, users) => {
   });
 };
 
-initWebSocket(new ScreenRender(), new Users());
+initWebSocket(new ScreenRenderMulti(), new Users());
