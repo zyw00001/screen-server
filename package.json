@@ -3,6 +3,34 @@
   "version": "1.1.0",
   "description": "screen-server",
   "main": "main.js",
+  "author": "",
+  "license": "ISC",
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-redux": "^7.1.0",
+    "react-router-dom": "^5.0.1",
+    "redux": "^4.0.4",
+    "redux-thunk": "^2.3.0",
+    "ws": "^7.0.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "cross-spawn": "^6.0.5",
+    "webpack": "^4.35.3",
+    "webpack-node-externals": "^1.7.2"
+  },
   "build": {
     "appId": "com.screen-server.app",
     "mac": {
@@ -19,15 +47,9 @@
     }
   },
   "scripts": {
-    "start": "electron-packager . screen-server --win --out build --arch=x64 --electron-version=4.1.5 --overwrite --ignore=.idea",
+    "packager": "electron-packager ./dist screen-server --win --out dist/build --arch=x64 --electron-version=4.1.5 --overwrite",
     "dist": "electron-builder --win --x64",
-    "dist32": "electron-builder --win --ia32"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^4.17.1",
-    "getmac": "^1.4.6",
-    "ws": "^7.0.1"
+    "dist32": "electron-builder --win --ia32",
+    "start": "babel-node tools/start"
   }
 }
